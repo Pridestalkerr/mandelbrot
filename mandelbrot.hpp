@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <cmath>
 
 namespace mbs{
 
@@ -27,8 +28,8 @@ public:
         width_(width),
         ReBound_(ReBound),
         ImBound_(ImBound),
-        ReSize_ (ReBound.second - ReBound.first),
-        ImSize_ (ImBound.second - ImBound.first),
+        ReSize_ (std::abs(ReBound.second - ReBound.first)),
+        ImSize_ (std::abs(ImBound.second - ImBound.first)),
         itrTable_(height, std::vector <u32> (width)) {
         calculateTable();
 	};
@@ -77,8 +78,8 @@ public:
     {
     	ReBound_ = ReBound;
         ImBound_ = ImBound;
-        ReSize_ = ReBound.second - ReBound.first;
-        ImSize_ = ImBound.second - ImBound.first;
+        ReSize_ = std::abs(ReBound.second - ReBound.first);
+        ImSize_ = std::abs(ImBound.second - ImBound.first);
         calculateTable();
     }
 
@@ -95,13 +96,13 @@ public:
     }
     void focus(const double &zoom = 0.85)
     {
-        update(std::make_pair(ImBound_.first*zoom, ImBound_.second*zoom), std::make_pair(ReBound_.first*zoom, ReBound_.second*zoom));
+        double cr = (ReBound_.first + ReBound_.second) / 2;
+        double ci = (ImBound_.first + ImBound_.second) / 2;
+        update(std::make_pair(ci - ImSize_ * zoom / 2, ci + ImSize_ * zoom / 2), std::make_pair(cr - ReSize_ * zoom / 2, cr + ReSize_ * zoom / 2));
     }
     void setOffset(const double &y, const double &x)
     {
-        yOffset_ += y;
-        xOffset_ += x;
-        update(std::make_pair(ImBound_.first + ImSize_*0.2, ImBound_.second+ ImSize_*0.2), std::make_pair(ReBound_.first, ReBound_.second));
+        update(std::make_pair(ImBound_.first + ImSize_*y, ImBound_.second+ ImSize_*y), std::make_pair(ReBound_.first + ReSize_*x, ReBound_.second + ReSize_*x));
         calculateTable();
     }
 
