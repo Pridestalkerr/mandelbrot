@@ -7,5 +7,7 @@ Compile with:
   g++ app.cpp -lsfml-graphics -lsfml-window -lsfml-system -lpthread
   
 WASD - move around
+
 num+ - zoom in
+
 num- - zoom out
