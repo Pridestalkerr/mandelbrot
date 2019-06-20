@@ -21,6 +21,7 @@ int main()
 		sf::Event event;
 		if(window.waitEvent(event))
 		{
+			stateChanged = true; //select proper events
 			switch(event.type)
 			{
 				case sf::Event::Closed:
@@ -64,9 +65,17 @@ int main()
 		}
 		if(stateChanged)
 		{
+			std::vector <int> hist(256);
 			for(int py = 0; py < 400; ++py)
 		        for(int px = 0; px < 500; ++px)
-		            img.setPixel(px, py, sf::Color(mb.getTable()[py][px], mb.getTable()[py][px]*2, mb.getTable()[py][px]*3%255));
+		        {
+		        	/*int r = (int)(9*(1-t)*t*t*t*255);
+					int g = (int)(15*(1-t)*(1-t)*t*t*255);
+					int b =  (int)(8.5*(1-t)*(1-t)*(1-t)*t*255);*/
+					double t = double(mb.getTable()[py][px]) / double(255);
+		            img.setPixel(px, py, sf::Color(int(9*(1-t)*t*t*t*255), int(15*(1-t)*(1-t)*t*t*255), int(8.5*(1-t)*(1-t)*(1-t)*t*255)));
+
+				}
 			stateChanged = false;
 			texture.loadFromImage(img);
 			sprite.setTexture(texture);

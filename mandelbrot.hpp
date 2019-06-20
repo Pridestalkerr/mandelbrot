@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <cmath>
+#include <thread>
 
 namespace mbs{
 
@@ -36,14 +37,30 @@ public:
 
 	void calculateTable()
 	{
+        std::vector <std::thread> threads(height_);
 		for(u32 py = 0; py < height_; ++py)
-	        for(u32 px = 0; px < width_; ++px)
+        {
+            threads[py] = std::thread(&Mandelbrot::calculateRow, this, py);
+        }  
+        for(auto &th : threads)
+            th.join();
+	        /*for(u32 px = 0; px < width_; ++px)
 	        {
 	            coordinates c = mapToPlane(std::make_pair(py, px));
 	            u32 itr = checkConvergence(c, 255);
 	            itrTable_[py][px] = itr;
-	        }
+	        }*/
 	}
+
+    void calculateRow(const u32 &py)
+    {
+        for(u32 px = 0; px < width_; ++px)
+        {
+            coordinates c = mapToPlane(std::make_pair(py, px));
+            u32 itr = checkConvergence(c, 255);
+            itrTable_[py][px] = itr;
+        }
+    }
 
     coordinates mapToPlane(const coordinates &pixel) //coordinates
     {
